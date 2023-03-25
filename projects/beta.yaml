@@ -50,9 +50,6 @@ spec:
         namespace: beta
         name: in-cluster
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: false
         syncOptions:
         - CreateNamespace=true
 status: {}

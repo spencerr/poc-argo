@@ -49,9 +49,6 @@ spec:
         namespace: alpha
         name: in-cluster
       syncPolicy:
-        automated:
-          prune: true
-          selfHeal: false
         syncOptions:
         - CreateNamespace=true
 status: {}
