@@ -4,7 +4,7 @@ metadata:
   annotations:
     argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
     argocd.argoproj.io/sync-options: PruneLast=true
-  name: beta-projects
+  name: beta
   namespace: argocd
 spec:
   clusterResourceWhitelist:
@@ -25,7 +25,7 @@ status: {}
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: beta-projects
+  name: beta
   namespace: argocd
 spec:
   generators:
@@ -41,7 +41,6 @@ spec:
       project: '{{ application.project }}'
       source:
         repoURL: '{{ source.repository }}'
-        revision: HEAD
         path: '{{ source.path }}'
         helm:
           valueFiles:
@@ -49,7 +48,7 @@ spec:
             - beta/values.yaml
       destination:
         namespace: beta
-        server: in-cluster
+        name: in-cluster
       syncPolicy:
         automated:
           prune: true
