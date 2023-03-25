@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  annotations:
+    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
+    argocd.argoproj.io/sync-options: PruneLast=true
+  name: alpha-projects
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  description: Alpha
+  destinations:
+  - namespace: '*'
+    server: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: alpha-projects
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/spencerr/poc-argo.git
+      revision: HEAD
+      files:
+      - path: apps/**/alpha/argo.yaml
+  template:
+    metadata:
+      name: alpha-{{ application.name }}
+    spec:
+      project: '{{ application.project }}'
+      source:
+        repoURL: '{{ source.repository }}'
+        revision: HEAD
+        path: '{{ source.path }}'
+        helm:
+          valueFiles:
+            - values.yaml
+            - alpha/values.yaml
+      destination:
+        namespace: alpha
+        server: in-cluster
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: false
+        syncOptions:
+        - CreateNamespace=true
+status: {}

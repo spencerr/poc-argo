@@ -1,0 +1,6 @@
+application: 
+  name: services-bar
+  project: alpha
+source:
+  repository: 'https://github.com/spencerr/poc-argo.git'
+  path: 'apps/b2k-pr-environment/services-bar'

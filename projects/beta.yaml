@@ -1,0 +1,59 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  annotations:
+    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
+    argocd.argoproj.io/sync-options: PruneLast=true
+  name: beta-projects
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  description: Beta
+  destinations:
+  - namespace: '*'
+    server: '*'
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+status: {}
+
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: beta-projects
+  namespace: argocd
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/spencerr/poc-argo.git
+      revision: HEAD
+      files:
+      - path: apps/**/beta/argo.yaml
+  template:
+    metadata:
+      name: beta-{{ application.name }}
+    spec:
+      project: '{{ application.project }}'
+      source:
+        repoURL: '{{ source.repository }}'
+        revision: HEAD
+        path: '{{ source.path }}'
+        helm:
+          valueFiles:
+            - values.yaml
+            - beta/values.yaml
+      destination:
+        namespace: beta
+        server: in-cluster
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: false
+        syncOptions:
+        - CreateNamespace=true
+status: {}
