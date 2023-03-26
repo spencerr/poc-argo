@@ -52,7 +52,7 @@ jobs:
           --password ${{ secrets.ARGOCD_PASSWORD }}
 
     - name: Argo - Set Image Tag
-      if: !inputs.commit
+      if: inputs.commit == false
       run: |
         argocd app set alpha-services-foo -p image.tag=${{ inputs.image-tag }}
 
