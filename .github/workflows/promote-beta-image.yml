@@ -16,7 +16,7 @@ jobs:
     - name: Promote - Retrieve Alpha Image
       working-directory: apps/b2k-pr-environment/services-foo/alpha
       run: |
-        echo "IMAGE_SHA=$(yq 'image.tag' values.yaml)" >> $GITHUB_ENV
+        echo "IMAGE_SHA=$(yq '.image.tag' values.yaml)" >> $GITHUB_ENV
 
     - name: Docker - Login
       uses: docker/login-action@v2
@@ -44,7 +44,7 @@ jobs:
     - name: Promote - Update Beta Image
       working-directory: apps/b2k-pr-environment/services-foo/beta
       run: |
-        yq -i 'image.tag = "${{ env.IMAGE_SHA }}"' values.yaml
+        yq -i '.image.tag = "${{ env.IMAGE_SHA }}"' values.yaml
     
     - name: Promote - Commit Beta Manifest
       uses: actions-js/push@master
