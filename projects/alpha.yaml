@@ -36,7 +36,6 @@ spec:
     metadata:
       name: alpha-{{ application.name }}
     spec:
-      revisionHistoryLimit: 2
       project: '{{ application.project }}'
       source:
         repoURL: '{{ source.repository }}'
