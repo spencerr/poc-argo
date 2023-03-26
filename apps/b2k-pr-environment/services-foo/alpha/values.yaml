@@ -7,7 +7,7 @@ fullnameOverride: services-foo
 nameOverride: ''
 image:
   repository: spencerritzow/foo-microservice
-  tag: services-foo-2
+  tag: services-foo-3
   pullPolicy: Always
 serviceAccount:
   # Specifies whether a service account should be created
