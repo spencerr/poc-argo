@@ -57,6 +57,7 @@ jobs:
         argocd app set alpha-services-foo -p image.tag=${{ inputs.image-tag }}
 
     - name: Argo - Sync
+      if: inputs.commit
       run: |
         argocd app sync alpha-services-foo
 
