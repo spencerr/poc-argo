@@ -1,14 +1,11 @@
-name: Alpha Deployment
+name: Promote Alpha to Beta
 
 on:
   workflow_dispatch:
     inputs:
-      image-tag:
+      service-name:
         type: string
         required: true
-      commit:
-        type: boolean
-        default: true
 jobs:
   preview-promotion:
     runs-on: ubuntu-latest
@@ -16,27 +13,23 @@ jobs:
     - name: Git - Checkout Manifest Repository
       uses: actions/checkout@v3
 
-    - name: Deployment - Retrieve Alpha Image
-      id: current-tag
-      if: inputs.commit
+    - name: Promote - Retrieve Alpha Image
       working-directory: apps/b2k-pr-environment/services-foo/alpha
       run: |
-        IMAGE_TAG=$(yq '.image.tag' values.yaml)
-        echo "$IMAGE_TAG"
-        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+        IMAGE_SHA=$(yq '.image.tag' values.yaml)
+        echo "$IMAGE_SHA"
+        echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
 
-    - name: Deployment - Update Alpha Image
-      if: inputs.commit && steps.current-tag.outputs.IMAGE_TAG != inputs.image-tag
-      working-directory: apps/b2k-pr-environment/services-foo/alpha
+    - name: Promote - Update Beta Image
+      working-directory: apps/b2k-pr-environment/services-foo/beta
       run: |
-        yq -i '.image.tag = "${{ inputs.image-tag }}"' values.yaml
+        yq -i '.image.tag = "${{ env.IMAGE_SHA }}"' values.yaml
     
-    - name: Deployment - Commit Alpha Manifest
-      if: inputs.commit && steps.current-tag.outputs.IMAGE_TAG != inputs.image-tag
+    - name: Promote - Commit Beta Manifest
       run: |
-        git config user.name "promote-bot"
+        git config user.name "promote-action"
         git config user.email "<>"
-        git commit -am "Promote ${{ inputs.image-tag }} to Alpha"
+        git commit -am "Promote $IMAGE_SHA to Beta"
         git push
 
     - name: Argo - Setup
@@ -51,16 +44,10 @@ jobs:
           --username ${{ secrets.ARGOCD_USERNAME }} \
           --password ${{ secrets.ARGOCD_PASSWORD }}
 
-    - name: Argo - Set Image Tag
-      if: inputs.commit == false
-      run: |
-        argocd app set alpha-services-foo -p image.tag=${{ inputs.image-tag }}
-
     - name: Argo - Sync
-      if: inputs.commit
       run: |
-        argocd app sync alpha-services-foo
+        argocd app sync beta-services-foo
 
     - name: Argo - Wait
       run: |
-        argocd app wait alpha-services-foo
+        argocd app wait beta-services-foo

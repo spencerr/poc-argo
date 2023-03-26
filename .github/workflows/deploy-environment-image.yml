@@ -1,0 +1,75 @@
+name: Environment Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      service-name:
+        type: string
+        required: true
+      environment:
+        type: environment
+        required: true
+      image-tag:
+        type: string
+        required: true
+      
+jobs:
+  deployment:
+    name: 'Deploy: ${{ inputs.environment }}-${{ inputs.service-name }}'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+    - name: Git - Checkout Manifest Repository
+      uses: actions/checkout@v3
+
+    - name: Deployment - Retrieve Current ${{ inputs.environment }} Image
+      id: current-tag
+      working-directory: apps/b2k-pr-environment/${{ inputs.service-name }}/${{ inputs.environment }}
+      run: |
+        IMAGE_TAG=$(yq '.image.tag' values.yaml)
+        echo "$IMAGE_TAG"
+        echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Deployment - Update ${{ inputs.environment }} Image
+      if: steps.current-tag.outputs.IMAGE_TAG != inputs.image-tag
+      working-directory: apps/b2k-pr-environment/${{ inputs.service-name }}/${{ inputs.environment }}
+      run: |
+        yq -i '.image.tag = "${{ inputs.image-tag }}"' values.yaml
+    
+    - name: Deployment - Commit ${{ inputs.environment }} Manifest
+      if: steps.current-tag.outputs.IMAGE_TAG != inputs.image-tag
+      run: |
+        git config user.name "promote-bot"
+        git config user.email "<>"
+        git commit -am "Deploy ${{ inputs.service-name }}:${{ inputs.image-tag }} to ${{ inputs.environment }}"
+        git push
+
+    - name: Argo - Setup
+      run: |
+        curl --insecure -sSL -o /usr/local/bin/argocd https://${{ secrets.ARGOCD_SERVER }}/download/argocd-linux-amd64
+        chmod +x /usr/local/bin/argocd
+
+    - name: Argo - Login
+      run: |
+        argocd login ${{ secrets.ARGOCD_SERVER }} \
+          --insecure \
+          --username ${{ secrets.ARGOCD_USERNAME }} \
+          --password ${{ secrets.ARGOCD_PASSWORD }}
+
+    # https://github.com/argoproj/argo-cd/issues/9101
+    # - name: Argo - Set Image Tag
+    #   run: |
+    #     argocd app set ${{ inputs.environment }}-${{ inputs.service-name }} -p image.tag=${{ inputs.image-tag }}
+
+    - name: Argo - Sync
+      if: inputs.commit
+      run: |
+        argocd app sync ${{ inputs.environment }}-${{ inputs.service-name }} --async
+
+    - name: Argo - Wait
+      run: |
+        argocd app wait ${{ inputs.environment }}-${{ inputs.service-name }} --sync
+
+    - name: Argo - Verify
+      run: |
+        argocd app get ${{ inputs.environment }}-${{ inputs.service-name }}
