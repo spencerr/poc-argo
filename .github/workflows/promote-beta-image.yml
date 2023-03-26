@@ -26,6 +26,7 @@ jobs:
         yq -i '.image.tag = "${{ env.IMAGE_SHA }}"' values.yaml
     
     - name: Promote - Commit Beta Manifest
-      uses: actions-js/push@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        git config --global user.name "promote-bot"
+        git commit -a -m "Promote $IMAGE_SHA to Beta"
+        git push
