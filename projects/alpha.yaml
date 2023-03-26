@@ -19,7 +19,6 @@ spec:
     kind: '*'
   sourceRepos:
   - '*'
-status: {}
 
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -37,6 +36,7 @@ spec:
     metadata:
       name: alpha-{{ application.name }}
     spec:
+      revisionHistoryLimit: 2
       project: '{{ application.project }}'
       source:
         repoURL: '{{ source.repository }}'
@@ -51,4 +51,3 @@ spec:
       syncPolicy:
         syncOptions:
         - CreateNamespace=true
-status: {}
