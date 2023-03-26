@@ -34,7 +34,7 @@ jobs:
 
     - name: Argo - Setup
       run: |
-        curl -sSL -o /usr/local/bin/argocd https://${{ secrets.ARGOCD_SERVER }}/download/argocd-linux-amd64
+        curl --insecure -sSL -o /usr/local/bin/argocd https://${{ secrets.ARGOCD_SERVER }}/download/argocd-linux-amd64
         chmod +x /usr/local/bin/argocd
 
     - name: Argo - Login
