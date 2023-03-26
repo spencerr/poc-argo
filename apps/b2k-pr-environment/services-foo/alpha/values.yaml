@@ -9,7 +9,7 @@ nameOverride: ''
 
 image:
   repository: spencerritzow/foo-microservice
-  tag: dev
+  tag: main
   pullPolicy: Always
 
 serviceAccount:
