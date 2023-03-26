@@ -20,28 +20,6 @@ jobs:
         echo "$IMAGE_SHA"
         echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
 
-    - name: Docker - Login
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Docker - Add Beta Label
-      id: meta
-      uses: docker/metadata-action@v4
-      with:
-        # list of Docker images to use as base name for tags
-        images: spencerr/foo-microservice:${{ env.IMAGE_SHA }}
-        labels: |
-          kubernetes.environment=beta
-
-    - name: Docker - Push Labels
-      uses: docker/build-push-action@v3
-      with:
-        context: .
-        push: true
-        labels: ${{ steps.meta.outputs.labels }}
-
     - name: Promote - Update Beta Image
       working-directory: apps/b2k-pr-environment/services-foo/beta
       run: |
