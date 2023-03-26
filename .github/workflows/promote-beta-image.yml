@@ -27,6 +27,7 @@ jobs:
     
     - name: Promote - Commit Beta Manifest
       run: |
-        git config --global user.name "promote-bot"
-        git commit -a -m "Promote $IMAGE_SHA to Beta"
+        git config --global user.name "promote-action"
+        git config --global user.email "spencerr@users.noreply.github.com"
+        git commit -am "Promote $IMAGE_SHA to Beta"
         git push
