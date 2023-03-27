@@ -20,11 +20,11 @@ jobs:
     steps:
       - name: Review Deployment
         run: |
-          echo "###Application deployment to ${{ inputs.environment }} has been requested."
+          echo "### Application deployment to ${{ inputs.environment }} has been requested." >> $GITHUB_STEP_SUMMARY
           echo "- Requestor: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "- Application: ${{ inputs.environment}}-${{ inputs.service-name }}" >> $GITHUB_STEP_SUMMARY
           echo "- Version: ${{ inputs.image-tag}}" >> $GITHUB_STEP_SUMMARY
-          
+
   deployment:
     name: 'Deploy: ${{ inputs.environment }}-${{ inputs.service-name }}'
     runs-on: ubuntu-latest
