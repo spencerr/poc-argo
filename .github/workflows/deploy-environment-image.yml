@@ -14,10 +14,22 @@ on:
         required: true
       
 jobs:
+  review:
+    name: 'Review: ${{ inputs.environment }}-${{ inputs.service-name }}'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Review Deployment
+        run: |
+          echo "###Application deployment to ${{ inputs.environment }} has been requested."
+          echo "- Requestor: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Application: ${{ inputs.environment}}-${{ inputs.service-name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Version: ${{ inputs.image-tag}}" >> $GITHUB_STEP_SUMMARY
+          
   deployment:
     name: 'Deploy: ${{ inputs.environment }}-${{ inputs.service-name }}'
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
+    needs: [review]
     steps:
     - name: Git - Checkout Manifest Repository
       uses: actions/checkout@v3
