@@ -77,11 +77,11 @@ jobs:
 
     - name: Argo - Sync
       run: |
-        argocd app sync ${{ inputs.environment }}-${{ inputs.service-name }} --async
+        argocd app sync ${{ inputs.environment }}-${{ inputs.service-name }}
 
     - name: Argo - Wait
       run: |
-        argocd app wait ${{ inputs.environment }}-${{ inputs.service-name }} --sync
+        argocd app wait ${{ inputs.environment }}-${{ inputs.service-name }}
 
     - name: Argo - Verify
       run: |
