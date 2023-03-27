@@ -14,14 +14,14 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Promote - Retrieve Alpha Image
-      working-directory: apps/b2k-pr-environment/services-foo/alpha
+      working-directory: apps/b2k-pr-environment/${{ inputs.service-name }}/alpha
       run: |
         IMAGE_SHA=$(yq '.image.tag' values.yaml)
         echo "$IMAGE_SHA"
         echo "IMAGE_SHA=$IMAGE_SHA" >> $GITHUB_ENV
 
     - name: Promote - Update Beta Image
-      working-directory: apps/b2k-pr-environment/services-foo/beta
+      working-directory: apps/b2k-pr-environment/${{ inputs.service-name }}/beta
       run: |
         yq -i '.image.tag = "${{ env.IMAGE_SHA }}"' values.yaml
     
@@ -46,8 +46,8 @@ jobs:
 
     - name: Argo - Sync
       run: |
-        argocd app sync beta-services-foo
+        argocd app sync beta-services-foo --async
 
     - name: Argo - Wait
       run: |
-        argocd app wait beta-services-foo
+        argocd app wait beta-services-foo --sync

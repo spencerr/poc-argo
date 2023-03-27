@@ -74,7 +74,6 @@ jobs:
     #     argocd app set ${{ inputs.environment }}-${{ inputs.service-name }} -p image.tag=${{ inputs.image-tag }}
 
     - name: Argo - Sync
-      if: inputs.commit
       run: |
         argocd app sync ${{ inputs.environment }}-${{ inputs.service-name }} --async
 
