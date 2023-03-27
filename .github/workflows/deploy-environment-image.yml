@@ -33,6 +33,8 @@ jobs:
     steps:
     - name: Git - Checkout Manifest Repository
       uses: actions/checkout@v3
+      with:
+        ref: 'main'
 
     - name: Deployment - Retrieve Current ${{ inputs.environment }} Image
       id: current-tag
