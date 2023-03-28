@@ -4,9 +4,9 @@ metadata:
   name: {{ include "services-foo.fullname" . }}
   labels:
     {{- include "services-foo.labels" . | nindent 4 }}
-{{- if .Values.bridge-to-kubernetes.enabled }}
   annotations:
-    routing.visualstudio.io/route-on-header=kubernetes-route-as: {{ .Values.bridge-to-kubernetes.route-as | quote }}
+{{- if .Values.bridge-to-kubernetes.enabled }}
+    routing.visualstudio.io/route-on-header: kubernetes-route-as={{ .Values.bridge-to-kubernetes.route-as | quote }}
 {{- end }}
 spec:
   type: {{ .Values.service.type }}
