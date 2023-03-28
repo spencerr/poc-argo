@@ -14,7 +14,7 @@ spec:
       labels:
         {{- include "services-foo.selectorLabels" . | nindent 8 }}
         {{- if .Values.bridgeToKubernetes.enabled }}
-        routing.visualstudio.io/route-from: {{ .Values.bridgeToKubernetes.routeFrom | quote }}
+        routing.visualstudio.io/route-from: {{ .Values.bridgeToKubernetes.routeFrom }}
         {{- end }}
       annotations:
       {{- if .Values.bridgeToKubernetes.enabled }}
