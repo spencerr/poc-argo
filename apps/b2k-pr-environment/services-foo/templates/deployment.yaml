@@ -13,6 +13,13 @@ spec:
     metadata:
       labels:
         {{- include "services-foo.selectorLabels" . | nindent 8 }}
+        {{- if .Values.bridgeToKubernetes.enabled }}
+        routing.visualstudio.io/route-from: {{ .Values.bridgeToKubernetes.routeFrom | quote }}
+        {{- end }}
+      annotations:
+      {{- if .Values.bridgeToKubernetes.enabled }}
+        routing.visualstudio.io/route-on-header: kubernetes-route-as={{- .Values.bridgeToKubernetes.routeAs -}}
+      {{- end }}
     spec:
       serviceAccountName: {{ include "services-foo.serviceAccountName" . }}
       containers:
