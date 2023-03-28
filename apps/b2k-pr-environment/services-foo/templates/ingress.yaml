@@ -10,7 +10,8 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - http:
+  - host: 45-79-241-209.ip.linodeusercontent.com 
+    http:
       paths:
       - path: /foo
         pathType: Prefix
