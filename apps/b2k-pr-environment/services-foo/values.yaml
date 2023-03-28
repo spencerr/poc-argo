@@ -7,10 +7,10 @@ replicaCount: 1
 fullnameOverride: services-foo
 nameOverride: ''
 
-bridge-to-kubernetes:
+bridgeToKubernetes:
   enabled: false
-  route-as: ''
-  route-from: ''
+  routeAs: ''
+  routeFrom: ''
 
 image:
   repository: spencerritzow/foo-microservice

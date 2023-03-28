@@ -5,8 +5,8 @@ metadata:
   labels:
     {{- include "services-foo.labels" . | nindent 4 }}
   annotations:
-{{- if .Values.bridge-to-kubernetes.enabled }}
-    routing.visualstudio.io/route-on-header: {{- printf "kubernetes-route-as=%s" .Values.bridge-to-kubernetes.route-as -}}
+{{- if .Values.bridgeToKubernetes.enabled }}
+    routing.visualstudio.io/route-on-header: {{- printf "kubernetes-route-as=%s" .Values.bridgeToKubernetes.routeAs -}}
 {{- end }}
 spec:
   type: {{ .Values.service.type }}

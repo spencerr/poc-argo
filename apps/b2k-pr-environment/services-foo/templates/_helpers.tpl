@@ -60,8 +60,8 @@ helm.sh/chart: {{ include "services-foo.chart" . }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- if .Values.bridge-to-kubernetes.enabled }}
-routing.visualstudio.io/route-from: {{ .Values.bridge-to-kubernetes.route-from | quote }}
+{{- if .Values.bridgeToKubernetes.enabled }}
+routing.visualstudio.io/route-from: {{ .Values.bridgeToKubernetes.routeFrom | quote }}
 {{- end }}
 {{- end }}
 
